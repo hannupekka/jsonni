@@ -9,6 +9,7 @@ import safeEval from "safe-eval";
 import "./stylesheets/main.less";
 import "./helpers/context_menu";
 import "./helpers/external_links";
+import _ from "lodash";
 
 // const hasClass = (elem, className) =>
 //   new RegExp(" " + className + " ").test(" " + elem.className + " ");
@@ -65,18 +66,22 @@ const isJSON = input => {
  * @param {string} input Input
  * @param {string} query Query
  */
-const evaluateQuery = (input, query) => {
+const evaluateQuery = _.debounce((input, query) => {
+  if (query === null) {
+    return;
+  }
+
+  const { queryValue, context } = query;
+
   try {
-    const evalQuery = safeEval(query);
+    const evalQuery = safeEval(queryValue, context);
     const isInputJSON = isJSON(input);
     const outputMirrorValue = isInputJSON
       ? JSON.stringify(evalQuery, null, 2)
       : stringify(evalQuery, { singleQuotes: false });
     outputMirror.setValue(outputMirrorValue);
-  } catch (e) {
-    // Do nothing.
-  }
-};
+  } catch (e) {}
+}, 200);
 
 /**
  * Parses input and returns it as string.
@@ -97,10 +102,26 @@ const parseInput = input => {
 const getInputValue = () => inputMirror.getValue();
 
 /**
- * Get query value.
+ * Get query value and context
  */
-const getQueryValue = () =>
-  queryMirror.getValue().replace("input.", `${getInputValue()}.`);
+const getQueryValue = () => {
+  const queryValue = queryMirror.getValue();
+  if (queryValue.startsWith("input.")) {
+    return {
+      queryValue: queryValue.replace("input.", `${getInputValue()}.`),
+      context: null
+    };
+  }
+
+  if (queryValue.startsWith("_.")) {
+    return {
+      queryValue: queryValue.replace("input", `${getInputValue()}`),
+      context: _
+    };
+  }
+
+  return null;
+};
 
 /**
  * Add event listener to input.

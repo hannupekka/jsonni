@@ -32,6 +32,7 @@
     "codemirror": "^5.41.0",
     "convert-to-object": "^0.0.4",
     "fs-jetpack": "^2.1.0",
+    "lodash": "4.17.11",
     "safe-eval": "^0.4.1",
     "stringify-object": "^3.3.0"
   },
