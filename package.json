@@ -1,15 +1,13 @@
 {
-  "name": "electron-boilerplate",
-  "productName": "Electron Boilerplate",
-  "description": "Starter for your Electron application",
-  "version": "0.0.0",
+  "name": "jsonni",
+  "productName": "JSONNI",
+  "description": "Tool for filtering JSON",
+  "version": "0.0.1",
   "private": true,
-  "author": "Mr. Gumby <mr.gumby@example.com>",
-  "copyright": "© 2017, Gumby inc.",
-  "homepage": "http://example.com",
+  "author": "Hannu-Pekka Heinäjärvi <hannupekka@gmail.com",
   "main": "app/background.js",
   "build": {
-    "appId": "com.example.electron-boilerplate",
+    "appId": "fi.hpheinajarvi.jsonni",
     "files": [
       "app/**/*",
       "node_modules/**/*",
@@ -31,7 +29,11 @@
     "release": "npm test && webpack --config=build/webpack.app.config.js --env=production && electron-builder"
   },
   "dependencies": {
-    "fs-jetpack": "^2.1.0"
+    "codemirror": "^5.41.0",
+    "convert-to-object": "^0.0.4",
+    "fs-jetpack": "^2.1.0",
+    "safe-eval": "^0.4.1",
+    "stringify-object": "^3.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.54",
@@ -44,6 +46,8 @@
     "electron-builder": "^20.15.1",
     "electron-mocha": "^6.0.4",
     "eslint": "^5.8.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "2.14.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "less": "^3.8.1",
     "less-loader": "^4.1.0",

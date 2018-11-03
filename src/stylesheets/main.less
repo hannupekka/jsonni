@@ -29,7 +29,7 @@ body {
   background-color: mediumseagreen;
   display: flex;
   flex-direction: row;
-  flex: 3;
+  flex: 1;
   padding: @padding;
 }
 
@@ -47,17 +47,10 @@ body {
 
 .container--bottom {
   background-color: lightslategray;
-  flex: 1;
+  height: 200px;
   padding: @padding;
 }
 
-.textarea--input,
-.textarea--output {
-  width: 100%;
+.CodeMirror {
   height: 100%;
-  resize: none;
-
-  &:focus {
-    outline: none;
-  }
 }
