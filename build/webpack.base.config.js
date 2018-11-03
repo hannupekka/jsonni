@@ -25,20 +25,21 @@ module.exports = env => {
     },
     devtool: "source-map",
     module: {
-      rules: [
-        {
+      rules: [{
           test: /\.js$/,
           exclude: /node_modules/,
           use: ["babel-loader"]
         },
         {
-          test: /\.css$/,
-          use: ["style-loader", "css-loader"]
+          test: /\.less$/,
+          use: ["style-loader", "css-loader", "less-loader"]
         }
       ]
     },
     plugins: [
-      new FriendlyErrorsWebpackPlugin({ clearConsole: env === "development" })
+      new FriendlyErrorsWebpackPlugin({
+        clearConsole: env === "development"
+      })
     ]
   };
 };

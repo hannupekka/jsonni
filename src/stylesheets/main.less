@@ -1,0 +1,63 @@
+@padding: 10px;
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  background-color: pink;
+  display: flex;
+  flex-direction: column;
+  padding: @padding;
+}
+
+.container--top {
+  background-color: mediumseagreen;
+  display: flex;
+  flex-direction: row;
+  flex: 3;
+  padding: @padding;
+}
+
+.container--input {
+  background-color: lightblue;
+  flex: 1;
+  padding: @padding;
+}
+
+.container--output {
+  background-color: lightyellow;
+  flex: 1;
+  padding: @padding;
+}
+
+.container--bottom {
+  background-color: lightslategray;
+  flex: 1;
+  padding: @padding;
+}
+
+.textarea--input,
+.textarea--output {
+  width: 100%;
+  height: 100%;
+  resize: none;
+
+  &:focus {
+    outline: none;
+  }
+}
