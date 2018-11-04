@@ -39,6 +39,7 @@ const outputMirror = CodeMirror.fromTextArea(
     cursorBlinkRate: -1
   }
 );
+const outputEl = outputMirror.getWrapperElement();
 
 // CodeMirror for query.
 const queryMirror = CodeMirror.fromTextArea(
@@ -52,6 +53,26 @@ const queryMirror = CodeMirror.fromTextArea(
 );
 const queryEl = queryMirror.getWrapperElement();
 
+/**
+ * Sets error class to fields and error message to output field.
+ * @param {String} error Error message
+ */
+const setError = error => {
+  if (error) {
+    outputMirror.setValue(error);
+  }
+
+  outputEl.classList.add("error");
+  queryEl.classList.add("error");
+};
+
+/**
+ * Clears error.
+ */
+const clearError = () => {
+  outputEl.classList.remove("error");
+  queryEl.classList.remove("error");
+};
 /**
  * Checks if given string is JSON.
  * @param {string} input Input to check.
@@ -84,9 +105,9 @@ const evaluateQuery = (input, query) => {
       ? JSON.stringify(evalQuery, null, 2)
       : stringify(evalQuery, { singleQuotes: false });
     outputMirror.setValue(outputMirrorValue);
-    queryEl.classList.remove("error");
+    clearError();
   } catch (e) {
-    queryEl.classList.add("error");
+    setError(e.message);
   }
 };
 
@@ -163,7 +184,7 @@ queryMirror.on("change", () => {
   const queryValue = parseQueryValueAndContext(queryMirror.getValue());
 
   if (queryValue === null) {
-    queryEl.classList.remove("error");
+    clearError();
     return;
   }
 
