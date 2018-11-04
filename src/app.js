@@ -3,6 +3,7 @@ import "../node_modules/codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript";
 import "codemirror/addon/edit/matchbrackets";
 import "codemirror/addon/edit/closebrackets";
+import "codemirror/addon/display/placeholder";
 import stringify from "stringify-object";
 import convertToObject from "convert-to-object";
 import safeEval from "safe-eval";
@@ -26,7 +27,7 @@ const MIRROR_OPTIONS = {
 // CodeMirror for input.
 const inputMirror = CodeMirror.fromTextArea(
   document.querySelector(".textarea--input"),
-  MIRROR_OPTIONS
+  { ...MIRROR_OPTIONS, placeholder: "Enter your input data" }
 );
 
 // CodeMirror for output.
@@ -34,7 +35,8 @@ const outputMirror = CodeMirror.fromTextArea(
   document.querySelector(".textarea--output"),
   {
     ...MIRROR_OPTIONS,
-    readOnly: true
+    readOnly: true,
+    cursorBlinkRate: -1
   }
 );
 
@@ -44,9 +46,11 @@ const queryMirror = CodeMirror.fromTextArea(
   {
     ...MIRROR_OPTIONS,
     mode: "javascript",
-    lineNumbers: false
+    lineNumbers: false,
+    placeholder: "Enter your query"
   }
 );
+const queryEl = queryMirror.getWrapperElement();
 
 /**
  * Checks if given string is JSON.
@@ -66,7 +70,7 @@ const isJSON = input => {
  * @param {string} input Input
  * @param {string} query Query
  */
-const evaluateQuery = _.debounce((input, query) => {
+const evaluateQuery = (input, query) => {
   if (query === null) {
     return;
   }
@@ -80,8 +84,13 @@ const evaluateQuery = _.debounce((input, query) => {
       ? JSON.stringify(evalQuery, null, 2)
       : stringify(evalQuery, { singleQuotes: false });
     outputMirror.setValue(outputMirrorValue);
-  } catch (e) {}
-}, 200);
+    queryEl.classList.remove("error");
+  } catch (e) {
+    queryEl.classList.add("error");
+  }
+};
+
+const evaluateQueryDebounced = _.debounce(evaluateQuery, 500);
 
 /**
  * Parses input and returns it as string.
@@ -104,18 +113,24 @@ const getInputValue = () => inputMirror.getValue();
 /**
  * Get query value and context
  */
-const getQueryValue = () => {
-  const queryValue = queryMirror.getValue();
-  if (queryValue.startsWith("input.")) {
+const parseQueryValueAndContext = value => {
+  const queryValue = _.trimEnd(value, ";");
+
+  // ES6
+  if (queryValue.startsWith("$input.")) {
     return {
-      queryValue: queryValue.replace("input.", `${getInputValue()}.`),
+      queryValue: queryValue.replace("$input.", `${getInputValue()}.`),
       context: null
     };
   }
 
+  // Lodash
   if (queryValue.startsWith("_.")) {
+    const isChained = queryValue.startsWith("_.chain(");
+    const queryValueSuffix = isChained ? ".value()" : "";
     return {
-      queryValue: queryValue.replace("input", `${getInputValue()}`),
+      queryValue:
+        queryValue.replace("$input", `${getInputValue()}`) + queryValueSuffix,
       context: _
     };
   }
@@ -135,12 +150,16 @@ inputMirror.on("change", (instance, change) => {
     inputMirror.setValue(inputMirrorValue);
   }
 
-  evaluateQuery(getInputValue(), getQueryValue());
+  const inputValue = inputMirror.getValue();
+  const queryValue = parseQueryValueAndContext(queryMirror.getValue());
+  evaluateQueryDebounced(inputValue, queryValue);
 });
 
 /**
  * Add event listener to query.
  */
 queryMirror.on("change", () => {
-  evaluateQuery(getInputValue(), getQueryValue());
+  const inputValue = inputMirror.getValue();
+  const queryValue = parseQueryValueAndContext(queryMirror.getValue());
+  evaluateQueryDebounced(inputValue, queryValue);
 });

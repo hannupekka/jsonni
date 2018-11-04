@@ -4,6 +4,12 @@
 <head>
   <meta charset="utf-8">
   <title>JSONNI</title>
+  <style>
+    ::selection {
+      background: white;
+      /* WebKit/Blink Browsers */
+    }
+  </style>
 </head>
 
 <body>
@@ -19,7 +25,9 @@
       </div>
     </div>
     <div class="container--bottom">
-      <div class="title">Query</div>
+      <div class="title">Query
+        <span class="help">Input data is available as: <code>$input</code></span>
+      </div>
       <textarea class="textarea--query"></textarea>
     </div>
   </div>

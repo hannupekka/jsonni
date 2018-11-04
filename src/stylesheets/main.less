@@ -1,5 +1,7 @@
 @padding: 10px;
 @color--bg: #ddd;
+@color--error-dark: #e07373;
+@color--error-light: #fff5f5;
 
 html,
 body {
@@ -55,11 +57,27 @@ body {
 }
 
 .title {
+  display: flex;
+  justify-content: space-between;
   color: darken(@color--bg, 60%);
   margin-bottom: @padding / 2;
+}
+
+.help {
+  font-size: 80%;
+  color: darken(@color--bg, 40%);
 }
 
 .CodeMirror {
   height: 100%;
   border: 1px solid darken(@color--bg, 20%);
+
+  &.error {
+    border: 1px solid @color--error-dark;
+    background-color: @color--error-light;
+  }
+
+  &.CodeMirror-empty {
+    color: darken(#fff, 50%);
+  }
 }
