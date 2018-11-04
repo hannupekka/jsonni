@@ -61,6 +61,10 @@ body {
   justify-content: space-between;
   color: darken(@color--bg, 60%);
   margin-bottom: @padding / 2;
+
+  .title--content {
+    align-self: flex-end;
+  }
 }
 
 .help {
@@ -80,4 +84,99 @@ body {
   &.CodeMirror-empty {
     color: darken(#fff, 50%);
   }
+}
+
+/**
+ * Help overlay
+ */
+.overlay {
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: @padding * 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: darken(@color--bg, 60%);
+
+  .overlay--backdrop {
+    background-color: #000;
+    opacity: 0.5;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .overlay--content {
+    opacity: 1;
+    position: relative;
+    background-color: #fff;
+    width: 720px;
+
+    .overlay--content-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-left: @padding * 3;
+      border-bottom: 1px solid @color--bg;
+    }
+
+    .overlay--content-body {
+      padding: @padding * 3;
+    }
+  }
+}
+
+.button {
+  color: darken(@color--bg, 40%);
+  &:focus {
+    outline: none;
+  }
+
+  &:hover {
+    cursor: pointer;
+    color: #000;
+    transition: color 0.15s ease-in-out;
+  }
+
+  &.icon {
+    background: none;
+    border: none;
+    line-height: 1;
+    padding: @padding;
+    font-size: 100%;
+
+    &.big {
+      font-size: 150%;
+    }
+  }
+}
+
+/**
+ * Icons.
+ */
+.fa {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.fa-question-circle {
+  width: 0.8571428571428571em;
+}
+
+/**
+ * Utils.
+ */
+.hidden {
+  display: none !important;
 }

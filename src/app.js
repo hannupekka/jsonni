@@ -47,7 +47,7 @@ const queryMirror = CodeMirror.fromTextArea(
     ...MIRROR_OPTIONS,
     mode: "javascript",
     lineNumbers: false,
-    placeholder: "Enter your query"
+    placeholder: "Enter your query, eg. $input.map(i => i)"
   }
 );
 const queryEl = queryMirror.getWrapperElement();
@@ -161,5 +161,25 @@ inputMirror.on("change", (instance, change) => {
 queryMirror.on("change", () => {
   const inputValue = inputMirror.getValue();
   const queryValue = parseQueryValueAndContext(queryMirror.getValue());
+
+  if (queryValue === null) {
+    queryEl.classList.remove("error");
+    return;
+  }
+
   evaluateQueryDebounced(inputValue, queryValue);
+});
+
+/**
+ * Add event listener to help button.
+ */
+document.querySelector("#help").addEventListener("click", () => {
+  document.querySelector(".overlay").classList.remove("hidden");
+});
+
+/**
+ * Add event listener to close help button.
+ */
+document.querySelector("#close").addEventListener("click", () => {
+  document.querySelector(".overlay").classList.add("hidden");
 });
