@@ -1,8 +1,13 @@
 // @import "fonts/fonts.css";
 @padding: 10px;
-@color--bg: #ddd;
-@color--error-dark: #e07373;
-@color--error-light: #fff5f5;
+@color--gray-1: #54585d;
+@color--gray-2: #878b90;
+@color--gray-3: #babec3;
+@color--gray-4: #d4d8dd;
+@color--gray-5: #edf1f6;
+
+@color--red-dark: #e07373;
+@color--red-light: #fff5f5;
 @font-family--default: -apple-system, BlinkMacSystemFont, "Segoe WPC",
   "Segoe UI", "HelveticaNeue-Light", "Ubuntu", "Droid Sans", sans-serif;
 @font-family--monospace: Menlo, Monaco, Consolas, "Droid Sans Mono",
@@ -18,6 +23,7 @@ body {
 
 body {
   font-family: @font-family--default;
+  color: @color--gray-1;
 }
 
 * {
@@ -27,7 +33,7 @@ body {
 .container {
   width: 100%;
   height: 100%;
-  background-color: @color--bg;
+  background-color: @color--gray-4;
   display: flex;
   flex-direction: column;
   padding: @padding;
@@ -64,42 +70,45 @@ body {
 .title {
   display: flex;
   justify-content: space-between;
-  color: darken(@color--bg, 60%);
   margin-bottom: @padding / 2;
 
   .title--content {
     align-self: flex-end;
   }
+
+  &.with-button {
+    margin-right: -(@padding / 2);
+  }
 }
 
 .help {
   font-size: 80%;
-  color: darken(@color--bg, 40%);
 }
 
 .CodeMirror {
   height: 100%;
-  border: 1px solid darken(@color--bg, 20%);
+  border: 1px solid @color--gray-3;
+  border-radius: 3px;
 
   &.error {
-    border: 1px solid @color--error-dark;
-    background-color: @color--error-light;
+    border: 1px solid @color--red-dark;
+    background-color: @color--red-light;
   }
 
   &.CodeMirror-empty {
-    color: darken(#fff, 50%);
   }
 }
 
 .button {
-  color: darken(@color--bg, 40%);
+  color: @color--gray-2;
+  transition: color 0.15s ease-in-out;
   &:focus {
     outline: none;
   }
 
   &:hover {
     cursor: pointer;
-    color: #000;
+    color: @color--gray-1;
     transition: color 0.15s ease-in-out;
   }
 
@@ -118,9 +127,11 @@ body {
 
 code {
   font-family: @font-family--monospace;
-  background-color: lighten(@color--bg, 3%);
+  background-color: @color--gray-2;
+  color: @color--gray-5;
   padding: @padding / 2;
   border-radius: @padding / 2;
+  display: inline-block;
 }
 
 /**
@@ -138,7 +149,6 @@ code {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: darken(@color--bg, 60%);
 
   .overlay--backdrop {
     background-color: #000;
@@ -151,17 +161,15 @@ code {
   }
 
   .overlay--content {
+    background-color: #fff;
     opacity: 1;
     position: relative;
-    background-color: #fff;
-    width: 720px;
+    max-width: 720px;
 
     .overlay--content-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-left: @padding * 3;
-      border-bottom: 1px solid @color--bg;
+      position: absolute;
+      width: 100%;
+      text-align: right;
     }
 
     .overlay--content-body {

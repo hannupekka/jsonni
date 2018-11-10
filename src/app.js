@@ -29,6 +29,7 @@ const inputMirror = CodeMirror.fromTextArea(
   document.querySelector(".textarea--input"),
   { ...MIRROR_OPTIONS, placeholder: "Enter your input data" }
 );
+const inputEl = inputMirror.getWrapperElement();
 
 // CodeMirror for output.
 const outputMirror = CodeMirror.fromTextArea(
@@ -57,20 +58,23 @@ const queryEl = queryMirror.getWrapperElement();
  * Sets error class to fields and error message to output field.
  * @param {String} error Error message
  */
-const setError = error => {
+const setError = (error, targets) => {
   if (error) {
     outputMirror.setValue(error);
   }
 
-  outputEl.classList.add("error");
-  queryEl.classList.add("error");
+  _.each(targets, target => {
+    target.classList.add("error");
+  });
 };
 
 /**
  * Clears error.
  */
 const clearError = () => {
+  inputEl.classList.remove("error");
   outputEl.classList.remove("error");
+  outputMirror.setValue("");
   queryEl.classList.remove("error");
 };
 /**
@@ -104,10 +108,10 @@ const evaluateQuery = (input, query) => {
     const outputMirrorValue = isInputJSON
       ? JSON.stringify(evalQuery, null, 2)
       : stringify(evalQuery, { singleQuotes: false });
-    outputMirror.setValue(outputMirrorValue);
     clearError();
+    outputMirror.setValue(outputMirrorValue);
   } catch (e) {
-    setError(e.message);
+    setError(e.message, [outputEl, queryEl]);
   }
 };
 
@@ -160,6 +164,25 @@ const parseQueryValueAndContext = value => {
 };
 
 /**
+ * Validates input value.
+ * @param {String} value Input.
+ */
+const validateInput = value => {
+  const isInputJSON = isJSON(value);
+
+  try {
+    const result = isInputJSON
+      ? JSON.stringify(JSON.parse(value), null, 2)
+      : safeEval(value);
+    clearError();
+    return !!result;
+  } catch (e) {
+    setError(e.message, [inputEl, outputEl]);
+    return false;
+  }
+};
+
+/**
  * Add event listener to input.
  */
 inputMirror.on("change", (instance, change) => {
@@ -172,6 +195,16 @@ inputMirror.on("change", (instance, change) => {
   }
 
   const inputValue = inputMirror.getValue();
+  if (inputValue.length === 0) {
+    outputMirror.setValue("");
+    clearError();
+    return;
+  }
+
+  if (!validateInput(inputValue)) {
+    return;
+  }
+
   const queryValue = parseQueryValueAndContext(queryMirror.getValue());
   evaluateQueryDebounced(inputValue, queryValue);
 });
