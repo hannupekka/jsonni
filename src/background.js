@@ -5,7 +5,7 @@
 
 import path from "path";
 import url from "url";
-import { app, Menu } from "electron";
+import { app, Menu, globalShortcut } from "electron";
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
 import createWindow from "./helpers/window";
@@ -40,6 +40,7 @@ app.on("ready", () => {
     width: 1000,
     height: 600
   });
+  mainWindow.maximize();
 
   mainWindow.loadURL(
     url.format({
@@ -56,4 +57,15 @@ app.on("ready", () => {
 
 app.on("window-all-closed", () => {
   app.quit();
+});
+
+app.on("ready", () => {
+  globalShortcut.register("Command+Q", () => {
+    app.quit();
+  });
+});
+
+app.on("will-quit", () => {
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll();
 });
