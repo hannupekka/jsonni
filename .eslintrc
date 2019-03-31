@@ -10,7 +10,8 @@
     "react/no-unescaped-entities": "off"
   },
   "env": {
-    "browser": true
+    "browser": true,
+    "mocha": true
   },
   "parser": "babel-eslint"
 }

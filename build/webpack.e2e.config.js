@@ -18,12 +18,11 @@ const entryFileContent = e2eDir
 
 jetpack.write(entryFilePath, entryFileContent);
 
-module.exports = env => {
-  return merge(base(env), {
+module.exports = env =>
+  merge(base(env), {
     entry: entryFilePath,
     output: {
       filename: "e2e.js",
       path: tempDir.path()
     }
   });
-};

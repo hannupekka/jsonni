@@ -18,12 +18,11 @@ const entryFileContent = srcDir
 
 jetpack.write(entryFilePath, entryFileContent);
 
-module.exports = env => {
-  return merge(base(env), {
+module.exports = env =>
+  merge(base(env), {
     entry: entryFilePath,
     output: {
       filename: "specs.js",
       path: tempDir.path()
     }
   });
-};

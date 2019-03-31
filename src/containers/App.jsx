@@ -246,6 +246,7 @@ class App extends Component {
               </button>
             </div>
             <textarea
+              id="input"
               className={classNames("textarea--input", { error: inputError })}
               ref={this.inputMirrorRef}
             />
@@ -262,7 +263,11 @@ class App extends Component {
                 Clear
               </button>
             </div>
-            <textarea className="textarea--output" ref={this.outputMirrorRef} />
+            <textarea
+              id="output"
+              className="textarea--output"
+              ref={this.outputMirrorRef}
+            />
           </div>
         </div>
         <div className="container--bottom">
@@ -278,6 +283,7 @@ class App extends Component {
             </button>
           </div>
           <textarea
+            id="query"
             className={classNames("textarea--query", { error: queryError })}
             ref={this.queryMirrorRef}
           />
