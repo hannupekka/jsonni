@@ -1,3 +1,6 @@
+@import "~codemirror/lib/codemirror.css";
+@import "~codemirror/theme/material.css";
+
 // @import "fonts/fonts.css";
 @padding: 10px;
 @color--gray-1: #54585d;
@@ -14,7 +17,8 @@
   "Courier New", monospace, "Droid Sans Fallback";
 
 html,
-body {
+body,
+#root {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -75,10 +79,6 @@ body {
   .title--content {
     align-self: flex-end;
   }
-
-  &.with-button {
-    margin-right: -(@padding / 2);
-  }
 }
 
 .help {
@@ -90,12 +90,8 @@ body {
   border: 1px solid @color--gray-3;
   border-radius: 3px;
 
-  &.error {
+  .error + & {
     border: 1px solid @color--red-dark;
-    background-color: @color--red-light;
-  }
-
-  &.CodeMirror-empty {
   }
 }
 

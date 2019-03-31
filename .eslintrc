@@ -1,12 +1,16 @@
 {
-  "extends": "airbnb-base",
+  "extends": ["airbnb-base", "plugin:react/recommended"],
   "rules": {
     "quotes": ["error", "double"],
     "implicit-arrow-linebreak": [0],
     "arrow-parens": "off",
-    "comma-dangle": "off"
+    "comma-dangle": "off",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+    "class-methods-use-this": "off",
+    "react/no-unescaped-entities": "off"
   },
   "env": {
     "browser": true
-  }
+  },
+  "parser": "babel-eslint"
 }

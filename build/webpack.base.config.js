@@ -9,42 +9,40 @@ const translateEnvToMode = env => {
   return "development";
 };
 
-module.exports = env => {
-  return {
-    target: "electron-renderer",
-    mode: translateEnvToMode(env),
-    node: {
-      __dirname: false,
-      __filename: false
-    },
-    externals: [nodeExternals()],
-    resolve: {
-      alias: {
-        env: path.resolve(__dirname, `../config/env_${env}.json`)
+module.exports = env => ({
+  target: "electron-renderer",
+  mode: translateEnvToMode(env),
+  node: {
+    __dirname: false,
+    __filename: false
+  },
+  externals: [nodeExternals()],
+  resolve: {
+    alias: {
+      env: path.resolve(__dirname, `../config/env_${env}.json`)
+    }
+  },
+  devtool: "source-map",
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: ["babel-loader"]
+      },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"]
+      },
+      {
+        test: /\.less$/,
+        use: ["style-loader", "css-loader", "less-loader"]
       }
-    },
-    devtool: "source-map",
-    module: {
-      rules: [
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: ["babel-loader"]
-        },
-        {
-          test: /\.css$/,
-          use: ["style-loader", "css-loader"]
-        },
-        {
-          test: /\.less$/,
-          use: ["style-loader", "css-loader", "less-loader"]
-        }
-      ]
-    },
-    plugins: [
-      new FriendlyErrorsWebpackPlugin({
-        clearConsole: env === "development"
-      })
     ]
-  };
-};
+  },
+  plugins: [
+    new FriendlyErrorsWebpackPlugin({
+      clearConsole: env === "development"
+    })
+  ]
+});

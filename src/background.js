@@ -12,7 +12,10 @@ import createWindow from "./helpers/window";
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
+// eslint-disable-next-line
 import env from "env";
+
+console.log({ env });
 
 const setApplicationMenu = () => {
   const menus = [editMenuTemplate];
