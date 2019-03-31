@@ -4,12 +4,20 @@ import "codemirror/mode/javascript/javascript";
 import "codemirror/addon/edit/matchbrackets";
 import "codemirror/addon/edit/closebrackets";
 import "codemirror/addon/display/placeholder";
+import "codemirror/addon/lint/lint";
+import "codemirror/addon/lint/javascript-lint";
+import "codemirror/addon/lint/json-lint";
 import stringify from "stringify-object";
 import convertToObject from "convert-to-object";
 import prettify from "insomnia-prettify";
 import safeEval from "safe-eval";
 import * as _ from "lodash";
 import classNames from "classnames";
+import { JSHINT } from "jshint";
+import jsonlint from "jsonlint";
+
+window.JSHINT = JSHINT;
+window.jsonlint = jsonlint;
 
 // CodeMirror base options.
 const MIRROR_OPTIONS = {
@@ -17,7 +25,8 @@ const MIRROR_OPTIONS = {
   lineNumbers: true,
   matchBrackets: true,
   autoCloseBrackets: true,
-  tabSize: 2
+  tabSize: 2,
+  theme: "ttcn"
 };
 
 class App extends Component {
@@ -26,7 +35,8 @@ class App extends Component {
     this.state = {
       showHelp: false,
       inputError: false,
-      queryError: false
+      queryError: false,
+      error: null
     };
 
     // Textarea refs.
@@ -44,7 +54,9 @@ class App extends Component {
     // Create CodeMirrors.
     this.inputMirror = CodeMirror.fromTextArea(this.inputMirrorRef.current, {
       ...MIRROR_OPTIONS,
-      placeholder: "Enter your input data"
+      mode: "application/json",
+      placeholder: "Enter your input data",
+      lint: true
     });
 
     this.outputMirror = CodeMirror.fromTextArea(this.outputMirrorRef.current, {
@@ -56,6 +68,10 @@ class App extends Component {
     this.queryMirror = CodeMirror.fromTextArea(this.queryMirrorRef.current, {
       ...MIRROR_OPTIONS,
       mode: "javascript",
+      lint: {
+        esversion: 6
+        // globals: ["$input"]
+      },
       lineNumbers: false,
       placeholder: "Enter your query, eg. $input.map(i => i)"
     });
@@ -85,8 +101,9 @@ class App extends Component {
   parseInput = input => {
     const isInputJSON = this.isJSON(input);
 
+    const tabSize = new Array(MIRROR_OPTIONS.tabSize + 1).join(" ");
     return isInputJSON
-      ? prettify.json(JSON.stringify(JSON.parse(input)), "  ", true)
+      ? prettify.json(JSON.stringify(JSON.parse(input)), tabSize, true)
       : stringify(convertToObject(input), { singleQuotes: false });
   };
 
@@ -149,7 +166,7 @@ class App extends Component {
    * @param {string} query Query
    */
   evaluateQuery = (input, query) => {
-    if (query === null) {
+    if (input.length === 0 || query === null) {
       this.setState({ queryError: false });
       return;
     }
@@ -162,10 +179,10 @@ class App extends Component {
       const outputMirrorValue = isInputJSON
         ? JSON.stringify(evalQuery, null, 2)
         : stringify(evalQuery, { singleQuotes: false });
-      this.setState({ queryError: false });
+      this.setState({ queryError: false, error: null });
       this.outputMirror.setValue(outputMirrorValue);
     } catch (e) {
-      this.setState({ queryError: true });
+      this.setState({ queryError: true, error: e.toString() });
     }
   };
 
@@ -175,16 +192,7 @@ class App extends Component {
    * @param {object} data Change data
    */
   onInputChange = () => {
-    // const { origin, text } = data;
-    // const value = text.join();
-
     const inputValue = this.inputMirror.getValue();
-
-    // // Format pasted input.
-    // if (origin === "paste" && value.length > 0) {
-    //   const formatted = this.parseInput(this.inputMirror.getValue());
-    //   return this.inputMirror.setValue(formatted);
-    // }
 
     if (!this.validateInput(inputValue)) {
       return false;
@@ -229,21 +237,21 @@ class App extends Component {
   };
 
   render() {
-    const { showHelp, inputError, queryError } = this.state;
+    const { showHelp, inputError, queryError, error } = this.state;
     return (
       <div className="container">
         <div className="container--top">
           <div className="container--input">
             <div className="title">
               <span className="title--content">Input</span>
-              <button
+              <span
                 id="beautify"
-                className="button icon"
+                className="button"
                 role="button"
                 onClick={this.onBeautify}
               >
                 Beautify
-              </button>
+              </span>
             </div>
             <textarea
               id="input"
@@ -254,14 +262,14 @@ class App extends Component {
           <div className="container--output">
             <div className="title">
               <span className="title--content">Output</span>
-              <button
+              <span
                 id="clear"
-                className="button icon"
+                className="button"
                 role="button"
                 onClick={this.onClear}
               >
                 Clear
-              </button>
+              </span>
             </div>
             <textarea
               id="output"
@@ -273,14 +281,15 @@ class App extends Component {
         <div className="container--bottom">
           <div className="title">
             <span className="title--content">Query</span>
-            <button
+            {queryError && <span className="error">{error}</span>}
+            <span
               id="help"
-              className="button icon"
+              className="button"
               role="button"
               onClick={this.toggleHelp}
             >
               Help
-            </button>
+            </span>
           </div>
           <textarea
             id="query"

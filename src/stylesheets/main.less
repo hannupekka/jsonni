@@ -1,7 +1,7 @@
 @import "~codemirror/lib/codemirror.css";
-@import "~codemirror/theme/material.css";
+@import "~codemirror/addon/lint/lint.css";
+@import "~codemirror/theme/ttcn.css";
 
-// @import "fonts/fonts.css";
 @padding: 10px;
 @color--gray-1: #54585d;
 @color--gray-2: #878b90;
@@ -9,7 +9,7 @@
 @color--gray-4: #d4d8dd;
 @color--gray-5: #edf1f6;
 
-@color--red-dark: #e07373;
+@color--red-dark: #cc0d0d;
 @color--red-light: #fff5f5;
 @font-family--default: -apple-system, BlinkMacSystemFont, "Segoe WPC",
   "Segoe UI", "HelveticaNeue-Light", "Ubuntu", "Droid Sans", sans-serif;
@@ -27,6 +27,7 @@ body,
 
 body {
   font-family: @font-family--default;
+  font-size: 14px;
   color: @color--gray-1;
 }
 
@@ -75,6 +76,7 @@ body {
   display: flex;
   justify-content: space-between;
   margin-bottom: @padding / 2;
+  height: @padding * 3;
 
   .title--content {
     align-self: flex-end;
@@ -89,15 +91,18 @@ body {
   height: 100%;
   border: 1px solid @color--gray-3;
   border-radius: 3px;
+}
 
-  .error + & {
-    border: 1px solid @color--red-dark;
-  }
+.error {
+  color: @color--red-dark;
+  align-self: flex-end;
 }
 
 .button {
   color: @color--gray-2;
   transition: color 0.15s ease-in-out;
+  align-self: flex-end;
+
   &:focus {
     outline: none;
   }
