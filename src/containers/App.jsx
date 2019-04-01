@@ -12,6 +12,7 @@ import convertToObject from "convert-to-object";
 import prettify from "insomnia-prettify";
 import safeEval from "safe-eval";
 import * as _ from "lodash";
+import { from } from "fromfrom";
 import classNames from "classnames";
 import { JSHINT } from "jshint";
 import jsonlint from "jsonlint";
@@ -36,7 +37,7 @@ class App extends Component {
       showHelp: false,
       inputError: false,
       queryError: false,
-      error: null
+      errorMessage: null
     };
 
     // Textarea refs.
@@ -77,8 +78,8 @@ class App extends Component {
     });
 
     // Attach event listeners to mirrors.
-    this.inputMirror.on("change", this.onInputChange);
-    this.queryMirror.on("change", this.onQueryChange);
+    this.inputMirror.on("change", _.debounce(this.onInputChange, 500));
+    this.queryMirror.on("change", _.debounce(this.onQueryChange, 500));
   }
 
   /**
@@ -157,6 +158,14 @@ class App extends Component {
       };
     }
 
+    // fromfrom
+    if (queryValue.startsWith("from")) {
+      return {
+        queryValue: queryValue.replace("$input", inputValue),
+        context: { from }
+      };
+    }
+
     return null;
   };
 
@@ -179,10 +188,10 @@ class App extends Component {
       const outputMirrorValue = isInputJSON
         ? JSON.stringify(evalQuery, null, 2)
         : stringify(evalQuery, { singleQuotes: false });
-      this.setState({ queryError: false, error: null });
+      this.setState({ queryError: false, errorMessage: null });
       this.outputMirror.setValue(outputMirrorValue);
     } catch (e) {
-      this.setState({ queryError: true, error: e.toString() });
+      this.setState({ queryError: true, errorMessage: e.toString() });
     }
   };
 
@@ -237,7 +246,8 @@ class App extends Component {
   };
 
   render() {
-    const { showHelp, inputError, queryError, error } = this.state;
+    const { showHelp, inputError, queryError, errorMessage } = this.state;
+
     return (
       <div className="container">
         <div className="container--top">
@@ -281,7 +291,7 @@ class App extends Component {
         <div className="container--bottom">
           <div className="title">
             <span className="title--content">Query</span>
-            {queryError && <span className="error">{error}</span>}
+            {queryError && <span className="error">{errorMessage}</span>}
             <span
               id="help"
               className="button"
