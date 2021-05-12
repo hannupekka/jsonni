@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
-    "codemirror": "^5.45.0",
+    "codemirror": "^5.58.2",
     "convert-to-object": "^0.0.4",
     "fromfrom": "^1.1.1",
     "fs-jetpack": "^2.1.0",
